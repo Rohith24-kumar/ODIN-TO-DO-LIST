@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caacupe+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caacupe+One&family=Lilita+One&display=swap');
+body{
+  margin: 0;
+  padding: 0;
+  background-color: aliceblue;
+  min-height: 100vh;
+  width: 100%;
+  
+}
+#root{
+  width: 100%;
+  min-height: 100vh;
+}
+
+.site-title {
+  text-align: center;
+  padding-top: 5px;
+}
+.site-title h2 {
+  margin: 0;
+  color: deepskyblue;
+  font-family: 'Caacupe One';
+  font-size: 5.5rem;
+}
+
+.site-title p {
+  margin:  0;
+  color: #929eae;
+  font-family: 'Lilita One', sans-serif;
+  font-size: 1.2rem;
+}
+
+.site-navBar {
+  width: calc(100% - 40px);
+  max-width: 1200px;
+  height: 70px;
+  margin: 15px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  background-color: azure;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  padding: 0 15px;
+}
+
+.nav-left {
+  display: flex;
+  gap: 10px;
+}
+
+
+.site-navBar button {
+  height: 35px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  background-color: transparent;
+  color: black;
+  width: 120px;
+  cursor: pointer;
+}
+
+
+.left-nav {
+  display: flex;
+  gap: 15px;
+}
+
+
+.left-nav button {
+  border: 1px dashed rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+}
+
+.nav-add:hover{
+  background-color: skyblue; 
+}
+.nav-delete:hover{
+  color: rgb(224, 81, 81);
+  border-color: rgb(227, 94, 94);
+  background-color: rgb(242, 202, 202);
+
+}
+.nav-left button:hover{
+ border-color: dodgerblue; 
+}
