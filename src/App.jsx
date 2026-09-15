@@ -2,41 +2,36 @@ import { useState } from 'react'
 import './App.css' 
 
 function App() { 
-  const[activeTab,SetActiveTab]=useState('Default');
-const[todo,setTodo]=useState([
-  {
-  id: 1,
-  title:'learn JS',
-  description:'study modules and class',
-  dueDate:'2026-09-10',
-  priority:'HIGH'
-  },
-   {
-  id: 2,
-  title:'Read Documentation',
-  description:'Go Through Guides',
-  dueDate:'2026-09-8',
-  priority:'MEDIUM'
-  },
-   {
-  id: 3,
-  title:'Build the project',
-  description:'configure the build',
-  dueDate:'2026-09-15',
-  priority:'LOW'
-  }
-]);
+  const[activeTab,setActiveTab]=useState('Default');
+const [todo, setTodo] = useState({
+  Default: [
+    { id: 1, title: 'learn JS', description: 'study modules and class', dueDate: '2026-09-10', priority: 'HIGH' },
+    { id: 2, title: 'Read Documentation', description: 'Go Through Guides', dueDate: '2026-09-08', priority: 'MEDIUM' },
+    { id: 3, title: 'Build the project', description: 'configure the build', dueDate: '2026-09-15', priority: 'LOW' }
+  ],
+  work:[
+    { id: 1, title: 'prepare weekly report', description: 'Summarize completed tasks', dueDate: '2026-09-12', priority: 'HIGH' },
+    { id: 2, title: 'Team meeting', description: 'Sync on Q3 goals', dueDate: '2026-09-11', priority: 'MEDIUM' }
+  ],
+  personal:[
+    { id: 1, title: 'Grocery shopping', description: 'Milk, eggs, bread', dueDate: '2026-09-09', priority: 'Low' }
+  ]
+});
+
 
 const handelAddTodo=()=>{
   const newTask={
     id:Date.now(),
-    title:"new project Task",
+    title:`New ${activeTab} Task`,
      description: 'Click edit to change descriptions',
       dueDate: '2026-10-01',
       priority: 'MEDIUM'
   };
-  setTodo([...todo,newTask])
-}
+  setTodo(
+    {...todo,
+      [activeTab]:[...todo[activeTab],newTask]})
+};
+const currentTab=todo[activeTab] || [];
 
   return ( 
     <> 
@@ -62,18 +57,18 @@ const handelAddTodo=()=>{
         <button className='default-add ' onClick={handelAddTodo}>+ Add ToDo</button> 
         
         <div className='todo-item-list'>
-          {todo.map((todo)=>(
-        <div key={todo.id} className='work'> 
+          {currentTab.map((singleTodo)=>(
+        <div key={singleTodo.id} className='work'> 
           <div  className='info'> 
             <div className='todo-content-left'> 
-              <input type='checkbox' name={`todo-${todo.id}`} value='Learn JS' id={`checkbox-${todo.id}`} className='custom-checkbox'></input> 
+              <input type='checkbox' name={`todo-${singleTodo.id}`} value='Learn JS' id={`checkbox-${todo.id}`} className='custom-checkbox'></input> 
               <div className='to-do-text-block'> 
-                <h4 className='todo-title'>{todo.title}</h4> 
-                <p className='todo-desc'>{todo.description}</p> 
+                <h4 className='todo-title'>{singleTodo.title}</h4> 
+                <p className='todo-desc'>{singleTodo.description}</p> 
                 <div className='todo-metadata'> 
                   <span className='due-label'>Due:</span> 
-                  <input type='date' defaultValue={todo.dueDate} id="dated"></input> 
-                  <span className={`priority-tag ${todo.priority.toLocaleLowerCase()}`}>{todo.priority}</span> 
+                  <input type='date' defaultValue={singleTodo.dueDate} id="dated"></input> 
+                  <span className={`priority-tag ${singleTodo.priority.toLowerCase()}`}>{singleTodo.priority}</span> 
                 </div> 
               </div> 
             </div> 
