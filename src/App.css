@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caacupe+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Caacupe+One&family=Lilita+One&display=swap');
-body{
+
+body {
   margin: 0;
   padding: 0;
   background-color: aliceblue;
   min-height: 100vh;
   width: 100%;
-  
 }
-#root{
+
+#root {
   width: 100%;
   min-height: 100vh;
 }
@@ -17,6 +18,7 @@ body{
   text-align: center;
   padding-top: 5px;
 }
+
 .site-title h2 {
   margin: 0;
   color: deepskyblue;
@@ -51,7 +53,6 @@ body{
   gap: 10px;
 }
 
-
 .site-navBar button {
   height: 35px;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -62,27 +63,189 @@ body{
   cursor: pointer;
 }
 
-
 .left-nav {
   display: flex;
   gap: 15px;
 }
-
 
 .left-nav button {
   border: 1px dashed rgba(0, 0, 0, 0.3);
   border-radius: 5px;
 }
 
-.nav-add:hover{
+.nav-add:hover {
   background-color: skyblue; 
 }
-.nav-delete:hover{
+
+.nav-delete:hover {
   color: rgb(224, 81, 81);
   border-color: rgb(227, 94, 94);
   background-color: rgb(242, 202, 202);
+}
+
+.nav-left button:hover {
+ border-color: dodgerblue; 
+}
+
+
+.default-page {
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  width: 1200px;
+  min-height: 400px;
+  position: relative;
+  margin: 30px auto 80px;  
+  background-color: white;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 90px 30px 30px 30px;
+  box-sizing: border-box;
+}
+
+.default-add {
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  background-color: rgb(68, 183, 224);
+}
+
+.default-htag {
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  margin: 0;
+  color: black;
+  font-family: 'Lilita One', sans-serif;
+  font-size: 1.8rem;
+}
+
+.todo-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+
+.work {
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  min-height: 110px;
+  border-radius: 5px;
+  background-color: #ffffff;
+  transition: all 0.2s ease-index;
+}
+
+.work:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.todo-content-left {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.custom-checkbox {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  margin-top: 3px;
+}
+
+.todo-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.todo-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-family: sans-serif;
+  color: #1e293b;
+}
+
+.todo-desc {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  font-family: sans-serif;
+}
+
+.todo-metadata {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-family: sans-serif;
+}
+
+.todo-metadata input[type="date"] {
+  border: none;
+  color: #64748b;
+  font-family: sans-serif;
+  background: transparent;
+}
+
+.priority-tag {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: white;
+  margin-left: 5px;
+}
+.priority-tag.high { background-color: #ef4444; }
+.priority-tag.medium { background-color: #f97316; }
+.priority-tag.low { background-color: #10b981; }
+
+
+.todo-content-right {
+  display: flex;
+  gap: 12px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #94a3b8; 
+  transition: color 0.2s ease;
 
 }
-.nav-left button:hover{
- border-color: dodgerblue; 
+.icon-btn:hover {
+  color: #334155;
+
+}
+.icon-btn.delete:hover {
+  color: #ef4444;
+}
+
+.site-navBar button.active-tab{
+  border-color: dodgerblue;
+  background-color: rgb(215, 238, 255);
+  font-weight: bold;
+  color: dodgerblue;
 }
