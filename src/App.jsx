@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import './App.css' 
+import { useState } from 'react';
+import './App.css';
 
-function App() { 
-
-  const [isCreating, SetIsCreating] = useState(false)
-  const [newProjectName, setProjectName] = useState('')
+function App() {
+  const [isCreating, setIsCreating] = useState(false);
+  const [newProjectName, setProjectName] = useState('');
   const [activeTab, setActiveTab] = useState('default');
   const [errorMessage, setErrorMessage] = useState('');
-  
+  const [showDeleteModal, setDeleteModal] = useState(false);
   const [todo, setTodo] = useState({
     default: [
       { id: 1, title: 'learn JS', description: 'study modules and class', dueDate: '2026-09-10', priority: 'HIGH', completed: false },
@@ -23,34 +22,50 @@ function App() {
     ]
   });
 
+  const confirmCustomDelete = () => {
+    const updateTodoState = { ...todo };
+    delete updateTodoState[activeTab];
+    
+    const remainingTabs = Object.keys(updateTodoState);
+    
+    if (remainingTabs.length > 0) {
+      setActiveTab(remainingTabs[0]);
+      setTodo(updateTodoState);
+    } else {
+      setActiveTab('default');
+      setTodo({ default: [] });
+    }
+    setDeleteModal(false);
+  };
+
+  const triggerDeleteProject = () => {
+    setDeleteModal(true);
+  };
+
   const submitNewProject = () => {
     const formattedName = newProjectName.trim();
     if (!formattedName) {
-      SetIsCreating(false);
+      setIsCreating(false);
       setErrorMessage('');
       return;
     }
-    const formattedkey = formattedName.toLowerCase();
-    if (todo[formattedkey]) {
-      setErrorMessage('A project with the same Name already Exists !..')
+    
+    const formattedKey = formattedName.toLowerCase();
+    if (todo[formattedKey]) {
+      setErrorMessage('A project with the same Name already Exists!..');
       return;
     }
-    setTodo({
-      ...todo,
-      [formattedkey]: []
-    });
-    setActiveTab(formattedkey);
+    
+    setTodo({ ...todo, [formattedKey]: [] });
+    setActiveTab(formattedKey);
     setProjectName('');
     setErrorMessage('');
-    SetIsCreating(false); 
+    setIsCreating(false);
   };
 
-  const handelDeleteTodo = (id) => {
+  const handleDeleteTodo = (id) => {
     const updatedCategoryList = todo[activeTab].filter(item => item.id !== id);
-    setTodo({
-      ...todo,
-      [activeTab]: updatedCategoryList
-    });
+    setTodo({ ...todo, [activeTab]: updatedCategoryList });
   };
 
   const handleToggleComplete = (id) => {
@@ -60,13 +75,10 @@ function App() {
       }
       return item;
     });
-    setTodo({
-      ...todo,
-      [activeTab]: updatedCategoryList
-    });
+    setTodo({ ...todo, [activeTab]: updatedCategoryList });
   };
 
-  const handelAddTodo = () => {
+  const handleAddTodo = () => {
     const newTask = {
       id: Date.now(),
       title: `New ${activeTab} Task`,
@@ -75,51 +87,46 @@ function App() {
       priority: 'MEDIUM',
       completed: false
     };
-    setTodo({
-      ...todo,
-      [activeTab]: [...todo[activeTab], newTask]
-    });
+    setTodo({ ...todo, [activeTab]: [...todo[activeTab], newTask] });
   };
 
   const currentTab = todo[activeTab] || [];
 
-  return ( 
-    <> 
-      <div className="site-title"> 
-        <h2>ToDo list</h2> 
-        <p>Organize Your Task Efficiently</p> 
-      </div> 
-
-      <div className="site-navBar"> 
-        <div className="nav-left"> 
+  return (
+    <>
+      <div className="site-title">
+        <h2>ToDo list</h2>
+        <p>Organize Your Task Efficiently</p>
+      </div>
+      
+      <div className="site-navBar">
+        <div className="nav-left">
           {Object.keys(todo).map((tabname) => (
             <button
               key={tabname}
-              
-              className={`nav-button-tab ${activeTab === tabname ? 'active-tab' : ''}`} 
+              className={`nav-button-tab ${activeTab === tabname ? 'active-tab' : ''}`}
               onClick={() => setActiveTab(tabname)}
             >
               {tabname.charAt(0).toUpperCase() + tabname.slice(1)}
-            </button> 
-          ))} 
-        </div> 
+            </button>
+          ))}
+        </div>
         
-        <div className="left-nav"> 
+        <div className="left-nav">
           {isCreating ? (
             <div className='inline-project-creator'>
-              <button 
+              <button
                 className="nav-cancel-project"
                 onClick={() => {
-                  SetIsCreating(false);
+                  setIsCreating(false);
                   setProjectName('');
                   setErrorMessage('');
                 }}
               >
                 ✕ Cancel
-              </button> 
-
+              </button>
               <div className='input-wrapper-container'>
-                <input 
+                <input
                   type="text"
                   placeholder='Project Name'
                   className={`project-name-input ${errorMessage ? 'input-error-border' : ''}`}
@@ -142,59 +149,69 @@ function App() {
             </div>
           ) : (
             <>
-              <button className="nav-delete">x Delete</button> 
-              <button className="nav-add" onClick={() => SetIsCreating(true)}>+ New Project</button> 
+              <button className="nav-delete" onClick={triggerDeleteProject}>x Delete</button>
+              <button className="nav-add" onClick={() => setIsCreating(true)}>+ New Project</button>
+              
+              {showDeleteModal && (
+                <div className='modal-backdrop'>
+                  <div className='custom-modal-box'>
+                    <h3 className='model-title'>Delete Project</h3>
+                    <p className='modal-text'>
+                      Are you sure you want to delete the entire <strong>{activeTab}</strong> project folder? This action will delete all tasks in the folder.
+                    </p>
+                    <div className='modal-action-row'>
+                      <button className='modal-btn-cancel' onClick={() => setDeleteModal(false)}>Cancel</button>
+                      <button className='modal-btn-confirm' onClick={confirmCustomDelete}>Delete Folder</button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           )}
-        </div> 
-      </div> 
+        </div>
+      </div>
       
-      <div className='default-page'> 
-       
-        <h5 className='default-htag'>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h5> 
-        <button className='default-add ' onClick={handelAddTodo}>+ Add ToDo</button> 
+      <div className='default-page'>
+        <h5 className='default-htag'>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h5>
+        <button className='default-add' onClick={handleAddTodo}>+ Add ToDo</button>
         
         <div className='todo-item-list'>
           {currentTab.map((singleTodo) => (
-            <div key={singleTodo.id} className='work'> 
-              <div className='info'> 
-                <div className='todo-content-left'> 
-                  <input 
+            <div key={singleTodo.id} className='work'>
+              <div className='info'>
+                <div className='todo-content-left'>
+                  <input
                     type='checkbox'
                     checked={singleTodo.completed}
                     onChange={() => handleToggleComplete(singleTodo.id)}
-                    name={`${activeTab}-todo-${singleTodo.id}`} 
-                    id={`${activeTab}-checkbox-${singleTodo.id}`} 
+                    name={`${activeTab}-todo-${singleTodo.id}`}
+                    id={`${activeTab}-checkbox-${singleTodo.id}`}
                     className='custom-checkbox'
-                  /> 
-                  <div className='to-do-text-block'> 
-                    <h4 className={`todo-title ${singleTodo.completed ? 'completed-task' : ''}`}>{singleTodo.title}</h4> 
-                    <p className='todo-desc'>{singleTodo.description}</p> 
-                    <div className='todo-metadata'> 
-                      <span className='due-label'>Due:</span> 
-                      <input type='date' defaultValue={singleTodo.dueDate} className="todo-date-field"></input> 
-                      <span className={`priority-tag ${(singleTodo.priority || 'LOW').toLowerCase()}`}>{singleTodo.priority || 'LOW'}</span> 
-                    </div> 
-                  </div> 
-                </div> 
-                
-                <div className='todo-content-right'> 
-                  <button className='icon-btn'>✏️</button> 
-                  <button 
-                    className='icon-button delete'
-                    onClick={() => handelDeleteTodo(singleTodo.id)}
-                  >
+                  />
+                  <div className='to-do-text-block'>
+                    <h4 className={`todo-title ${singleTodo.completed ? 'completed-task' : ''}`}>{singleTodo.title}</h4>
+                    <p className='todo-desc'>{singleTodo.description}</p>
+                    <div className='todo-metadata'>
+                      <span className='due-label'>Due:</span>
+                      <input type='date' defaultValue={singleTodo.dueDate} className="todo-date-field" />
+                      <span className={`priority-tag ${(singleTodo.priority || 'LOW').toLowerCase()}`}>{singleTodo.priority || 'LOW'}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className='todo-content-right'>
+                  <button className='icon-btn'>✏️</button>
+                  <button className='icon-button delete' onClick={() => handleDeleteTodo(singleTodo.id)}>
                     X
-                  </button> 
-                </div> 
-              </div> 
-            </div> 
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
           {currentTab.length === 0 && <p className="empty-state-text">No tasks remaining in this list!</p>}
-        </div> 
+        </div>
       </div>
-    </> 
-  ) 
-} 
+    </>
+  );
+}
 
-export default App
+export default App;
