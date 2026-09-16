@@ -2,22 +2,34 @@ import { useState } from 'react'
 import './App.css' 
 
 function App() { 
-  const[activeTab,setActiveTab]=useState('Default');
+  const[activeTab,setActiveTab]=useState('default');
 const [todo, setTodo] = useState({
-  Default: [
-    { id: 1, title: 'learn JS', description: 'study modules and class', dueDate: '2026-09-10', priority: 'HIGH' },
-    { id: 2, title: 'Read Documentation', description: 'Go Through Guides', dueDate: '2026-09-08', priority: 'MEDIUM' },
-    { id: 3, title: 'Build the project', description: 'configure the build', dueDate: '2026-09-15', priority: 'LOW' }
+  default: [
+    { id: 1, title: 'learn JS', description: 'study modules and class', dueDate: '2026-09-10', priority: 'HIGH', completed:false },
+    { id: 2, title: 'Read Documentation', description: 'Go Through Guides', dueDate: '2026-09-08', priority: 'MEDIUM' , completed:false},
+    { id: 3, title: 'Build the project', description: 'configure the build', dueDate: '2026-09-15', priority: 'LOW' , completed:false}
   ],
   work:[
-    { id: 1, title: 'prepare weekly report', description: 'Summarize completed tasks', dueDate: '2026-09-12', priority: 'HIGH' },
-    { id: 2, title: 'Team meeting', description: 'Sync on Q3 goals', dueDate: '2026-09-11', priority: 'MEDIUM' }
+    { id: 4, title: 'prepare weekly report', description: 'Summarize completed tasks', dueDate: '2026-09-12', priority: 'HIGH', completed:false },
+    { id: 5, title: 'Team meeting', description: 'Sync on Q3 goals', dueDate: '2026-09-11', priority: 'MEDIUM', completed:false }
   ],
   personal:[
-    { id: 1, title: 'Grocery shopping', description: 'Milk, eggs, bread', dueDate: '2026-09-09', priority: 'Low' }
+    { id: 6, title: 'Grocery shopping', description: 'Milk, eggs, bread', dueDate: '2026-09-09', priority: 'Low', completed:false }
   ]
 });
 
+const handleToggleComplete=(id)=>{
+  const updatedCategoryList=todo[activeTab].map(item=>{
+    if(item.id===id){
+      return{ ...item,completed:!item.completed};
+    }
+    return item;
+  });
+ setTodo({
+      ...todo,
+      [activeTab]: updatedCategoryList
+    });
+  };
 
 const handelAddTodo=()=>{
   const newTask={
@@ -25,12 +37,15 @@ const handelAddTodo=()=>{
     title:`New ${activeTab} Task`,
      description: 'Click edit to change descriptions',
       dueDate: '2026-10-01',
-      priority: 'MEDIUM'
+      priority: 'MEDIUM',
+      completed:false
   };
   setTodo(
     {...todo,
       [activeTab]:[...todo[activeTab],newTask]})
 };
+
+
 const currentTab=todo[activeTab] || [];
 
   return ( 
@@ -42,9 +57,15 @@ const currentTab=todo[activeTab] || [];
       
       <div className="site-navBar"> 
         <div className="nav-left"> 
-          <button className={`nav-deafult ${activeTab === 'Default' ? 'active-tab':'' }`} onClick={()=>setActiveTab('Default')}>Default</button> 
-          <button className={`nav-work ${activeTab === 'work' ? 'active-tab':'' }`} onClick={()=>setActiveTab('work')}>Work</button> 
-          <button className={`nav-personal ${activeTab === 'personal' ? 'active-tab':'' }`} onClick={()=>setActiveTab('personal')}>Personal</button> 
+          <button 
+          className={`nav-deafult ${activeTab === 'default' ? 'active-tab':'' }`} 
+          onClick={()=>setActiveTab('default')}>Default</button> 
+          <button 
+          className={`nav-work ${activeTab === 'work' ? 'active-tab':'' }`}
+          onClick={()=>setActiveTab('work')}>Work</button> 
+          <button 
+          className={`nav-personal ${activeTab === 'personal' ? 'active-tab':'' }`} 
+          onClick={()=>setActiveTab('personal')}>Personal</button> 
         </div> 
         <div className="left-nav"> 
           <button className="nav-delete">x Delete</button> 
@@ -61,9 +82,15 @@ const currentTab=todo[activeTab] || [];
         <div key={singleTodo.id} className='work'> 
           <div  className='info'> 
             <div className='todo-content-left'> 
-              <input type='checkbox' name={`todo-${singleTodo.id}`} value='Learn JS' id={`checkbox-${todo.id}`} className='custom-checkbox'></input> 
+              <input type='checkbox'
+              checked={singleTodo.completed}
+              onChange={()=> handleToggleComplete(singleTodo.id)}
+               name={`-todo-${singleTodo.id}`} 
+               id={`-checkbox-${singleTodo.id}`} 
+               className='custom-checkbox'
+               ></input> 
               <div className='to-do-text-block'> 
-                <h4 className='todo-title'>{singleTodo.title}</h4> 
+                <h4 className={`todo-title ${singleTodo.completed?'completed-task':''}`}>{singleTodo.title}</h4> 
                 <p className='todo-desc'>{singleTodo.description}</p> 
                 <div className='todo-metadata'> 
                   <span className='due-label'>Due:</span> 

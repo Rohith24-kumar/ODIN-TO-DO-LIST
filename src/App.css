@@ -250,3 +250,7 @@ body {
   color: dodgerblue;
 }
 
+.todo-title.completed-task{
+  text-decoration: line-through;
+    color: #94a3b8; 
+}
