@@ -18,6 +18,15 @@ const [todo, setTodo] = useState({
   ]
 });
 
+const handelDeleteTodo=(id)=>{
+  const updatedCategoryList=todo[activeTab].filter(item=>item.id!==id);
+   setTodo({
+      ...todo,
+      [activeTab]: updatedCategoryList
+    });
+  };
+
+
 const handleToggleComplete=(id)=>{
   const updatedCategoryList=todo[activeTab].map(item=>{
     if(item.id===id){
@@ -102,7 +111,9 @@ const currentTab=todo[activeTab] || [];
             
             <div className='todo-content-right'> 
               <button className='icon-button'>✏️</button> 
-              <button className='icon-button delete'>X</button> 
+              <button 
+              className='icon-button delete'
+              onClick={()=> handelDeleteTodo(singleTodo.id)}>X</button> 
             </div> 
           </div> 
         </div> 
