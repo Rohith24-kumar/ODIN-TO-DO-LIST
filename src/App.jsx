@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import './App.css';
 
@@ -8,7 +7,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('default');
   const [errorMessage, setErrorMessage] = useState('');
   const [showDeleteModal, setDeleteModal] = useState(false);
-  const [showTodoModal, setShowTodoModel] = useState(false);
+  const [showTodoModal, setShowTodoModal] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -44,7 +44,6 @@ function App() {
         completed: false
       }
     ],
-
     work: [
       {
         id: 4,
@@ -63,7 +62,6 @@ function App() {
         completed: false
       }
     ],
-
     personal: [
       {
         id: 6,
@@ -76,18 +74,75 @@ function App() {
     ]
   });
 
-  const handleAddTodo = (e) => {
-    if (e) {
-      e.preventDefault();
-    }
+  const handleEditClick = (task) => {
+    setEditingTaskId(task.id);
 
-    if (!formData.title.trim()) return;
+    setFormData({
+      title: task.title,
+      description: task.description,
+      dueDate: task.dueDate,
+      priority: task.priority
+    });
+
+    setShowTodoModal(true);
+  };
+
+  const handleCancel = () => {
+    setShowTodoModal(false);
+    setEditingTaskId(null);
+
+    setFormData({
+      title: '',
+      description: '',
+      dueDate: '',
+      priority: 'MEDIUM'
+    });
+  };
+
+  const handleAddTodo = (e) => {
+    e.preventDefault();
+
+    if (editingTaskId !== null) {
+      const updatedCategoryList = todo[activeTab].map((item) => {
+        if (item.id === editingTaskId) {
+          return {
+            ...item,
+            title: formData.title.trim(),
+            description:
+              formData.description.trim() ||
+              'No Description provided.',
+            dueDate: formData.dueDate,
+            priority: formData.priority
+          };
+        }
+
+        return item;
+      });
+
+      setTodo({
+        ...todo,
+        [activeTab]: updatedCategoryList
+      });
+
+      setEditingTaskId(null);
+      setShowTodoModal(false);
+
+      setFormData({
+        title: '',
+        description: '',
+        dueDate: '',
+        priority: 'MEDIUM'
+      });
+
+      return;
+    }
 
     const newTask = {
       id: Date.now(),
       title: formData.title.trim(),
       description:
-        formData.description.trim() || 'No Description provided.',
+        formData.description.trim() ||
+        'No Description provided.',
       dueDate:
         formData.dueDate ||
         new Date().toISOString().split('T')[0],
@@ -107,11 +162,13 @@ function App() {
       priority: 'MEDIUM'
     });
 
-    setShowTodoModel(false);
+    setEditingTaskId(null);
+    setShowTodoModal(false);
   };
 
   const confirmCustomDelete = () => {
     const updateTodoState = { ...todo };
+
     delete updateTodoState[activeTab];
 
     const remainingTabs = Object.keys(updateTodoState);
@@ -140,7 +197,9 @@ function App() {
       return;
     }
 
-    const formattedKey = formattedName.toLowerCase();
+    const formattedKey = formattedName
+      .toLowerCase()
+      .replace(/\s+/g, '-');
 
     if (todo[formattedKey]) {
       setErrorMessage(
@@ -189,6 +248,24 @@ function App() {
     });
   };
 
+  const handleDateChange = (id, newDate) => {
+    const updatedCategoryList = todo[activeTab].map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          dueDate: newDate
+        };
+      }
+
+      return item;
+    });
+
+    setTodo({
+      ...todo,
+      [activeTab]: updatedCategoryList
+    });
+  };
+
   const currentTab = todo[activeTab] || [];
 
   return (
@@ -208,7 +285,8 @@ function App() {
               }`}
               onClick={() => setActiveTab(tabname)}
             >
-              {tabname.charAt(0).toUpperCase() + tabname.slice(1)}
+              {tabname.charAt(0).toUpperCase() +
+                tabname.slice(1).replace(/-/g, ' ')}
             </button>
           ))}
         </div>
@@ -232,7 +310,9 @@ function App() {
                   type="text"
                   placeholder="Project Name"
                   className={`project-name-input ${
-                    errorMessage ? 'input-error-border' : ''
+                    errorMessage
+                      ? 'input-error-border'
+                      : ''
                   }`}
                   autoFocus
                   value={newProjectName}
@@ -318,12 +398,23 @@ function App() {
       <div className="default-page">
         <h5 className="default-htag">
           {activeTab.charAt(0).toUpperCase() +
-            activeTab.slice(1)}
+            activeTab.slice(1).replace(/-/g, ' ')}
         </h5>
 
         <button
           className="default-add"
-          onClick={() => setShowTodoModel(true)}
+          onClick={() => {
+            setEditingTaskId(null);
+
+            setFormData({
+              title: '',
+              description: '',
+              dueDate: '',
+              priority: 'MEDIUM'
+            });
+
+            setShowTodoModal(true);
+          }}
         >
           + Add ToDo
         </button>
@@ -335,7 +426,9 @@ function App() {
               onSubmit={handleAddTodo}
             >
               <h3 className="model-title todo-form-header">
-                New Todo
+                {editingTaskId !== null
+                  ? 'Edit Todo'
+                  : 'New Todo'}
               </h3>
 
               <div className="form-group-field">
@@ -410,16 +503,7 @@ function App() {
                 <button
                   type="button"
                   className="modal-btn modal-btn-cancel"
-                  onClick={() => {
-                    setShowTodoModel(false);
-
-                    setFormData({
-                      title: '',
-                      description: '',
-                      dueDate: '',
-                      priority: 'MEDIUM'
-                    });
-                  }}
+                  onClick={handleCancel}
                 >
                   Cancel
                 </button>
@@ -428,7 +512,9 @@ function App() {
                   type="submit"
                   className="modal-btn todo-btn-create"
                 >
-                  Create
+                  {editingTaskId !== null
+                    ? 'Save Changes'
+                    : 'Create'}
                 </button>
               </div>
             </form>
@@ -476,7 +562,13 @@ function App() {
 
                       <input
                         type="date"
-                        defaultValue={singleTodo.dueDate}
+                        value={singleTodo.dueDate}
+                        onChange={(e) =>
+                          handleDateChange(
+                            singleTodo.id,
+                            e.target.value
+                          )
+                        }
                         className="todo-date-field"
                       />
 
@@ -494,7 +586,12 @@ function App() {
                 </div>
 
                 <div className="todo-content-right">
-                  <button className="icon-btn">
+                  <button
+                    className="icon-btn"
+                    onClick={() =>
+                      handleEditClick(singleTodo)
+                    }
+                  >
                     ✏️
                   </button>
 
